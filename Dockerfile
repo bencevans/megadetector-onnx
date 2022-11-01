@@ -24,6 +24,7 @@ RUN git clone https://github.com/ultralytics/yolov5/ /home/workspace/yolov5 && \
     cd /home/workspace/yolov5 && git checkout ${YOLOV5_SHA}
 
 RUN micromamba install -y -n base -f /home/workspace/cameratraps/environment-detector.yml && \
+    micromamba install -y -n base onnx=1.12.0 && \
     micromamba clean --all --yes
 
 ENV PYTHONPATH="$PYTHONPATH:/home/workspace/cameratraps:/home/workspace/ai4eutils:/home/workspace/git/yolov5"
