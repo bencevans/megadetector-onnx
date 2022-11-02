@@ -23,6 +23,7 @@ jobs:
         run: ./build
 
       - uses: actions/upload-artifact@v3
+        if: ${{ env.ACTIONS_RUNNER_DEBUG }}
         with:
           path: models/*.onnx
           retention-days: 1
