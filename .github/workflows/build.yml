@@ -18,3 +18,8 @@ jobs:
 
       - name: ONNX Models
         run: ./build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: models/*.onnx
+          retention-days: 1
