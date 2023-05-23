@@ -11,17 +11,17 @@ echo "Converting MDv5a Dynamic"
 docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --dynamic --include onnx --weights models/md_v5a.0.0.pt
 mv models/md_v5a.0.0.onnx models/md_v5a.0.0-dynamic.onnx
 
-echo "Converting MDv5a 640x640"
-docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --img-size 640 --img-size 640 --include onnx --weights models/md_v5a.0.0.pt
-mv models/md_v5a.0.0.onnx models/md_v5a.0.0-640x640.onnx
+echo "Converting MDv5a 1280x1280"
+docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --img-size 1280 --img-size 1280 --include onnx --weights models/md_v5a.0.0.pt
+mv models/md_v5a.0.0.onnx models/md_v5a.0.0-1280x1280.onnx
 
 
 echo "Downloading MDv5b"
 wget -q -c https://github.com/microsoft/CameraTraps/releases/download/v5.0/md_v5b.0.0.pt -O models/md_v5b.0.0.pt
 
-echo "Converting MDv5b 640x640"
-docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --img-size 640 --img-size 640 --include onnx --weights models/md_v5b.0.0.pt
-mv models/md_v5b.0.0.onnx models/md_v5b.0.0-640x640.onnx
+echo "Converting MDv5b 1280x1280"
+docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --img-size 1280 --img-size 1280 --include onnx --weights models/md_v5b.0.0.pt
+mv models/md_v5b.0.0.onnx models/md_v5b.0.0-1280x1280.onnx
 
 echo "Converting MDv5b Dynamic"
 docker run --rm -v $(pwd)/models:/home/workspace/models megadetector-onnx python -m yolov5.export --dynamic --include onnx --weights models/md_v5b.0.0.pt
