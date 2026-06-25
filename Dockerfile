@@ -1,32 +1,43 @@
-FROM mambaorg/micromamba:0.27.0
+FROM python:3.10-slim
 
-ARG CAMERATRAPS_SHA=0b310aa7aeb35d958285cdb1b172b1cc220ba0f7
-ARG AI4EUTILS_SHA=9260e6b876fd40e9aecac31d38a86fe8ade52dfd
-ARG YOLOV5_SHA=c23a441c9df7ca9b1f275e8c8719c949269160d1
+ARG YOLOV5_REF=v7.0
+ARG TORCH_VERSION=2.2.2
+ARG TORCHVISION_VERSION=0.17.2
 
 RUN mkdir -p /home/workspace
 WORKDIR /home/workspace
 
-USER root
-
 RUN apt-get update && \
-    apt-get install -y git libgl1
+    apt-get install -y --no-install-recommends git libgl1 libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
 
-USER mambauser
+RUN git clone https://github.com/ultralytics/yolov5 /home/workspace/yolov5 && \
+    cd /home/workspace/yolov5 && git checkout "${YOLOV5_REF}"
 
-RUN git clone https://github.com/Microsoft/cameratraps /home/workspace/cameratraps && \
-    cd /home/workspace/cameratraps && git checkout ${CAMERATRAPS_SHA}
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    python -m pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu \
+        "torch==${TORCH_VERSION}+cpu" \
+        "torchvision==${TORCHVISION_VERSION}+cpu" && \
+    python -m pip install --no-cache-dir \
+        "numpy<1.24" \
+        "Pillow<10" \
+        "matplotlib>=3.2.2" \
+        "opencv-python-headless>=4.1.1,<4.10" \
+        "pandas>=1.1.4" \
+        "PyYAML>=5.3.1" \
+        "requests>=2.23.0" \
+        "scipy>=1.4.1" \
+        "seaborn>=0.11.0" \
+        "tensorboard>=2.4.1" \
+        "ipython" \
+        "dill" \
+        "tqdm>=4.41.0" \
+        "protobuf<=3.20.1" \
+        "psutil" \
+        "thop" \
+        "onnx==1.12.0"
 
-RUN git clone https://github.com/Microsoft/ai4eutils /home/workspace/ai4eutils && \
-    cd /home/workspace/ai4eutils && git checkout ${AI4EUTILS_SHA}
+ENV PYTHONPATH="/home/workspace/yolov5"
 
-RUN git clone https://github.com/ultralytics/yolov5/ /home/workspace/yolov5 && \
-    cd /home/workspace/yolov5 && git checkout ${YOLOV5_SHA}
-
-RUN micromamba install -y -n base -f /home/workspace/cameratraps/environment-detector.yml && \
-    micromamba install -y -n base -c conda-forge onnx=1.12.0 && \
-    micromamba clean --all --yes
-
-ENV PYTHONPATH="$PYTHONPATH:/home/workspace/cameratraps:/home/workspace/ai4eutils:/home/workspace/git/yolov5"
-
-CMD ["python", "-m", "yolov5.export"]
+CMD ["python", "/home/workspace/yolov5/export.py"]
